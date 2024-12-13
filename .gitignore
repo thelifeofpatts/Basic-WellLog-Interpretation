@@ -1,3 +1,9 @@
 BWLI_LL4.ipynb
 BWLI_test.ipynb
 output1.xlsx
+
+# Ignore all __pycache__ directories
+__pycache__/
+
+# Ignore all .ipynb_checkpoints directories
+.ipynb_checkpoints/
