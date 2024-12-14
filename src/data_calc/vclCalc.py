@@ -27,15 +27,15 @@ def vclsp(sp_log, sp_clean, sp_clay):
 
 
 def vclrt(rt_log, rt_clean, rt_clay):
-    if rt_log == 0 or (rt_clean == rt_clay):
-      return np.nan
-    else:
-      vrt=(rt_clay/rt_log)*(rt_clean-rt_log)/(rt_clean-rt_clay)
+    vrt = np.where( (rt_log == 0) | (rt_clean == rt_clay),
+      np.nan,
+      (rt_clay/rt_log)*(rt_clean-rt_log)/(rt_clean-rt_clay)
+    )
 
-    if (rt_log > 2* rt_clay):
-        vclrt = 0.5 * (2 * vrt)** (0.67*(vrt+1))
-    else:
-        vclrt = vrt
+    vclrt = np.where(rt_log > 2* rt_clay,
+        0.5 * (2 * vrt)** (0.67*(vrt+1)),
+        vrt
+    )
     return vclrt
 
 def vclnd(neut_log,den_log,neut_clean1,den_clean1,neut_clean2,den_clean2,neut_clay,den_clay):
