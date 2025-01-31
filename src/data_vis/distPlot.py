@@ -1,4 +1,5 @@
 import seaborn as sns
+import numpy as np
 import matplotlib.pyplot as plt
 
 def boxplot(data, columns_to_plot, columns_unit):
@@ -108,5 +109,77 @@ def densityplot(data, columns_to_plot, columns_unit):
         for i in range(len(columns), len(axes.flat)):
             fig.delaxes(axes.flat[i])
 
+    plt.tight_layout()
+    plt.show()
+
+def crossplot(logs,x,y,c,x_label,y_label,c_label):
+    def scatter_hist(x, y, c, ax, ax_histx, ax_histy, ax_cbar, x_name, y_name, c_name, x_label, y_label, c_label):
+        ax_histx.tick_params(axis="x")
+        ax_histy.tick_params(axis="y")
+
+        # Remove NaN values from the data
+        valid_data_mask = ~np.isnan(x) & ~np.isnan(y) & ~np.isnan(c)
+        x = x[valid_data_mask]
+        y = y[valid_data_mask]
+        c = c[valid_data_mask]
+
+        points = ax.scatter(x, y, c=c, s=50,cmap="viridis", alpha=0.8, edgecolors="none")
+        cbar = plt.colorbar(points, cax=ax_cbar)
+
+        bins = 100
+
+        # Create a histogram for x and set the color based on values in column C
+        hist_x, edges_x = np.histogram(x, bins=bins)
+
+        # Create a colormap for gradient colors based on column C
+        norm_x = plt.Normalize(c.min(), c.max())
+        cmap_x = plt.get_cmap("viridis")
+
+        for i in range(len(edges_x) - 1):
+            mask = (x >= edges_x[i]) & (x < edges_x[i+1])
+            ax_histx.bar([edges_x[i]], [np.sum(mask)], width=np.diff(edges_x)[i], color=cmap_x(norm_x(c[mask])))
+
+        # Create a histogram for y and set the color based on values in column C
+        hist_y, edges_y = np.histogram(y, bins=bins)
+
+        # Create a colormap for gradient colors based on column C
+        norm_y = plt.Normalize(c.min(), c.max())
+        cmap_y = plt.get_cmap("viridis")
+
+        for i in range(len(edges_y) - 1):
+            mask = (y >= edges_y[i]) & (y < edges_y[i+1])
+            ax_histy.barh([edges_y[i]], [np.sum(mask)], height=np.diff(edges_y)[i], color=cmap_y(norm_y(c[mask])))
+
+        ax.invert_yaxis()
+        ax_histy.invert_yaxis()
+
+        ax.set_xlabel(f'{x_name} [{x_label}]')
+        ax.set_ylabel(f'{y_name} [{y_label}]')
+
+        ax_histx.set_xlabel(f'{x_name} [{x_label}]')
+        ax_histx.set_ylabel(f'{c_name} [{c_label}]')
+        ax_histx.set_yticks([])
+
+        ax_histy.set_ylabel(f'{y_name} [{y_label}]')
+        ax_histy.set_xlabel(f'{c_name} [{c_label}]')
+        ax_histy.set_xticks([])
+
+        ax_cbar.set_title(f'{c_name} [{c_label}]', fontsize=10)
+    fig = plt.figure(figsize=(10, 10))
+    fig.suptitle(f'{x} - {y} Crossplot'.upper(), fontsize=14, fontweight='bold')
+    fig.subplots_adjust(top=0.95, wspace=0.01, hspace=0.01)
+
+    gs = fig.add_gridspec(2, 3, width_ratios=(0.1, 9, 0.9), height_ratios=(1, 9))
+
+    # Create the axes
+    ax = fig.add_subplot(gs[1, 1])
+    ax_histx = fig.add_subplot(gs[0, 1], xticklabels=[])
+    ax_histy = fig.add_subplot(gs[1, 2], yticklabels=[])
+    ax_cbar = fig.add_subplot(gs[1, 0])
+
+    # Replace 'logs.NPHI' and 'logs.RHOB' with 'x' and 'y' as you pass these as function arguments
+    scatter_hist(logs[x], logs[y], logs[c], ax, ax_histx, ax_histy, ax_cbar, x, y, c, x_label, y_label, c_label)
+
+    # Finally, show the plot
     plt.tight_layout()
     plt.show()

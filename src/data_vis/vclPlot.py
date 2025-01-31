@@ -81,8 +81,8 @@ def vcl_plot(logs, depth_start, depth_end, gr_clean=None, gr_clay=None,
         cbar.set_label('GR [API]', rotation=90, size=5)
         ax5.set_xlabel('NPHI [%]')
         ax5.set_ylabel('RHOB [g/cc]')
-        # ax5.invert_yaxis()
-        # ax5.invert_xaxis()
+        ax5.invert_yaxis()
+        ax5.invert_xaxis()
         ax5.grid(True)
 
         # Add axis limits (set constraints here)
@@ -95,7 +95,7 @@ def vcl_plot(logs, depth_start, depth_end, gr_clean=None, gr_clay=None,
                     marker='o', color='black', linewidth=1)
             ax5.text(neut_clean1, den_clean1, 'clean point 1', fontsize=6,
                     bbox=dict(boxstyle="round", fc="white", ec="0.5", alpha=0.8))
-            ax5.text(neut_clean2 - 0.1, den_clean2 + 0.5, 'clean point 2', fontsize=6,
+            ax5.text(neut_clean2, den_clean2, 'clean point 2', fontsize=6,
                     bbox=dict(boxstyle="round", fc="white", ec="0.5", alpha=0.8))
 
         if neut_clay is not None and den_clay is not None:
