@@ -7,4 +7,4 @@ __pycache__/
 # Ignore setup generated dir
 *.egg-info/
 
-data/raw/ll-4_wire_lima.las
+data/raw/*.las
