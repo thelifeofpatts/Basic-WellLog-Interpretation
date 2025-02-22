@@ -184,7 +184,9 @@ def custom_plot(logs, fig_height, depth_start, depth_end, *custom_logs, units):
         major_tick_interval = 100
         minor_tick_interval = 10
 
-    # General setting for all axes
+    # consider edge case where ax is not iterable
+    if not hasattr(ax, '__iter__'):  # edge case where ax is not iterable
+        ax = [ax]
     for axes in ax:
         axes.set_ylim(depth_start, depth_end)
         axes.invert_yaxis()

@@ -69,14 +69,15 @@ def interpretation_plot(logs, core_selected_data, fig_height, depth_start, depth
     ax11.plot(logs.DR, logs.DEPT, label='DR[m.ohm]', color='red')
     ax11.tick_params(axis='x', colors='red')
 
-    ax12=ax[1].twiny()
-    if MR_min != "auto" and MR_max != "auto":
-        ax12.set_xlim(MR_min,MR_max)
-    ax12.set_xscale('log')
-    ax12.plot(logs.MR, logs.DEPT, label='MR[m.ohm]', color='purple')
-    ax12.spines['top'].set_position(('outward',40))
-    ax12.set_xlabel('MR[m.ohm]', color='purple')
-    ax12.tick_params(axis='x', colors='purple')
+    if ("MR" in logs.columns and (MR_min!=0 or MR_max!=0)):
+      ax12=ax[1].twiny()
+      if MR_min != "auto" and MR_max != "auto":
+          ax12.set_xlim(MR_min,MR_max)
+      ax12.set_xscale('log')
+      ax12.plot(logs.MR, logs.DEPT, label='MR[m.ohm]', color='purple')
+      ax12.spines['top'].set_position(('outward',40))
+      ax12.set_xlabel('MR[m.ohm]', color='purple')
+      ax12.tick_params(axis='x', colors='purple')
 
     ax13=ax[1].twiny()
     if SR_min != "auto" and SR_max != "auto":
@@ -99,15 +100,15 @@ def interpretation_plot(logs, core_selected_data, fig_height, depth_start, depth
     # ax21.plot(logs.DT, logs.DEPT, label='DT[us/ft]', color='blue')
     # ax21.set_xlabel('DT[us/ft]', color='blue')
     # ax21.tick_params(axis='x', colors='blue')
-
-    ax22=ax[2].twiny()
-    if NPHI_min != "auto" and NPHI_max != "auto":
-        ax22.set_xlim(NPHI_min,NPHI_max)
-    ax22.invert_xaxis()
-    ax22.plot(logs.NPHI, logs.DEPT, label='NPHI[%]', color='green')
-    ax22.spines['top'].set_position(('outward',40))
-    ax22.set_xlabel('NPHI[%]', color='green')
-    ax22.tick_params(axis='x', colors='green')
+    if ("NPHI" in logs.columns and (NPHI_min!=0 or NPHI_max!=0)):
+      ax22=ax[2].twiny()
+      if NPHI_min != "auto" and NPHI_max != "auto":
+          ax22.set_xlim(NPHI_min,NPHI_max)
+      ax22.invert_xaxis()
+      ax22.plot(logs.NPHI, logs.DEPT, label='NPHI[%]', color='green')
+      ax22.spines['top'].set_position(('outward',40))
+      ax22.set_xlabel('NPHI[%]', color='green')
+      ax22.tick_params(axis='x', colors='green')
 
     ax23=ax[2].twiny()
     if RHOB_min != "auto" and RHOB_max != "auto":
@@ -222,7 +223,8 @@ def interpretation_plot(logs, core_selected_data, fig_height, depth_start, depth
     ax62.tick_params(axis='x', colors='orange')
     ax62.legend(loc='lower left')
 
-def pickett_plot(logs, vcl_limit, a, rwa, m, n, z):
+def pickett_plot(logs, depth_start, depth_end, vcl_limit, a, rwa, m, n, z):
+    logs = logs[(logs['DEPT'] >= depth_start) & (logs['DEPT'] <= depth_end)] # Modifies df
     plt.figure(figsize=(7,6))
     plt.title('Pickett Plot'+ ' for VCL < '+ str(int(vcl_limit*100)) + '%' + " and Rw = " + str(rwa) + " ohm.m")
     c = logs[z][logs.VCL<vcl_limit]
